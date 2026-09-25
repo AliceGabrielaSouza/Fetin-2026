@@ -136,7 +136,7 @@ def Cadastro(request):
 def Carma(request):
 
     profile = get_object_or_404(Profile, user=request.user)
-
+    
     if profile.role == 'ADMIN':
 
         company_users = User.objects.filter(profile__company=profile.company,profile__role='EMPLOYEE').order_by('first_name','username')
