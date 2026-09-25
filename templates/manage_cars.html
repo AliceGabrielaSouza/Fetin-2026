@@ -1,0 +1,91 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar carros</title>
+</head>
+
+<body>
+
+    <h1>Gerenciar carros</h1>
+
+    <h2>Programar carro</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Programar
+        </button>
+
+    </form>
+
+
+    <hr>
+
+
+    <h2>Programações cadastradas</h2>
+
+    {% if assignments %}
+
+        <table border="1">
+
+            <tr>
+                <th>Carro</th>
+                <th>Funcionário</th>
+                <th>Data inicial</th>
+                <th>Data final</th>
+            </tr>
+
+            {% for assignment in assignments %}
+
+                <tr>
+
+                    <td>
+                        {{ assignment.car.identifier }}
+                    </td>
+
+                    <td>
+                        {% if assignment.user.first_name %}
+                            {{ assignment.user.first_name }}
+                        {% else %}
+                            {{ assignment.user.username }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ assignment.start_date|date:"d/m/Y" }}
+                    </td>
+
+                    <td>
+                        {{ assignment.end_date|date:"d/m/Y" }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+        </table>
+
+    {% else %}
+
+        <p>Nenhuma programação cadastrada.</p>
+
+    {% endif %}
+
+
+    <br>
+
+    <a href="{% url 'Carma' %}">
+        Voltar
+    </a>
+
+</body>
+
+</html>

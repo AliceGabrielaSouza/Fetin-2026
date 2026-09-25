@@ -1,0 +1,185 @@
+body{
+    background-color: rgb(0, 0, 0);
+    color: white;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+title{
+    flex-direction: column;
+    line-height: 10px;
+}
+
+li{
+    display: inline-block;
+    margin: 20px;
+}
+
+a{
+    color: white;
+}
+
+hover{
+    color: rgb(152, 35, 35);
+    transition: 0.3s all;
+}
+h1{
+    font-weight: 200;
+}
+h2 {
+    font-size: 100px;
+    line-height: 10px;
+    color: rgb(152, 35, 35);
+    margin-bottom: 70px;  /* Aumenta o espaço abaixo do h2 */
+}
+
+p {
+    font-size: 20px;
+    line-height: 20px;
+    max-width: 500px;
+    font-family: poppinslight;
+    margin-top: 40px;  /* Aumenta o espaço acima do parágrafo */
+}
+main{
+    display: flex;
+    flex-direction: row;
+    margin-top: 50px;
+    
+}
+
+h2{
+    font-size: 100px;
+    line-height: 10px;
+    color: rgb(152, 35, 35);
+}
+
+p{
+    font-size: 20px;
+    line-height: 20px;
+    max-width: 500px;
+    font-family: poppinslight;
+}
+
+img{
+    width: 200px;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+form [type="submit"]{
+    height: 50px;
+    width: 50%;
+    background-color: rgb(152, 35, 35);
+    color: white;
+    font-weight: bold;
+}
+form [type="submit"]:hover{
+    cursor: pointer;
+}
+
+input{
+    margin-top: 20px;
+    height: 20px;
+    padding: 15px;
+    border-radius: 20px;
+    border: none;
+    font-size: 15px;
+}
+
+ul {
+    list-style: none; /* Remove os marcadores padrão */
+    padding: 0; /* Remove o preenchimento padrão */
+    margin: 0; /* Remove a margem padrão */
+    display: flex; /* Exibe os itens em linha */
+    color: white; /* Muda a cor da fonte para branco */
+    font-size: 20px; /* Define o tamanho da fonte */
+}
+
+ul li {
+    margin-right: 15px; /* Espaço entre os itens */
+}
+
+ul a {
+    color: white; /* Cor do texto dos links */
+    text-decoration: none; /* Remove o sublinhado padrão */
+}
+
+a:hover {
+    color: rgb(152, 35, 35); /* Muda a cor ao passar o mouse */
+}
+article {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Aumenta o espaçamento entre as imagens */
+    margin-left: 50px;
+}
+
+article img {
+    width: 100px; /* Reduz o tamanho das imagens */
+    height: auto;
+    border-radius: 10px; /* Faz as imagens com bordas arredondadas */
+}
+.large-image {
+    width: 100%; /* Ajuste a largura para 100% da largura do elemento pai */
+    max-width: 100px; /* Largura máxima que a imagem pode atingir */
+    height: auto; /* Mantém a proporção da imagem */
+}
+.btn-secondary {
+    background-color: rgb(152, 35, 35); /* Cor de fundo */
+    border: 2px solid rgb(152, 35, 35); /* Borda do botão */
+    color: rgb(152, 35, 35); /* Cor do texto */
+    padding: 10px 20px; /* Espaçamento interno (topo/baixo, esquerda/direita) */
+    border-radius: 15px; /* Bordas arredondadas */
+    font-weight: bold; /* Peso da fonte */
+    font-size: 16px; /* Tamanho da fonte */
+}
+
+/* Estilos ao passar o mouse */
+.btn-secondary:hover {
+    background-color: rgb(152, 35, 35); /* Cor de fundo ao passar o mouse */
+    color: rgb(255, 255, 255); /* Cor do texto ao passar o mouse */
+    border: 2px solid rgb(152, 35, 35); /* Mantém a borda ao passar o mouse */
+    cursor: pointer; /* Cursor de mão ao passar o mouse */
+}
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espaço entre cada item */
+}
+
+/* Cada item que contém imagem e texto */
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Imagem e texto devem ocupar o espaço disponível */
+    gap: 20px; /* Espaço entre o texto e a imagem */
+}
+
+/* Quando a classe reverse é aplicada, o layout é invertido */
+.item.reverse {
+    flex-direction: row-reverse; /* Inverte a ordem de exibição: texto à esquerda e imagem à direita */
+}
+
+/* Estilo para as imagens */
+.team-image {
+    width: 100px; /* Ajuste o tamanho da imagem como preferir */
+    height: auto;
+}
+
+/* Texto */
+p {
+    max-width: 500px; /* Limita o tamanho do texto para que não ocupe muito espaço */
+    font-size: 16px;
+}

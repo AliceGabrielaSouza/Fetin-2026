@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leituras em {{ selected_date }}</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .part {
+            border: 1px solid #ccc;
+            padding: 10px;
+            flex: 1;
+            margin: 5px;
+        }
+        body {
+            background-color: black; /* Fundo preto */
+            color: white; /* Texto branco */
+            font-family: Arial, sans-serif; /* Fonte padrão */
+        }
+
+        /* Estilo para a container e as partes */
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .part {
+            border: 1px solid #ccc;
+            padding: 10px;
+            flex: 1;
+            margin: 5px;
+            background-color: #333; /* Fundo escuro para as partes */
+            color: white; /* Garantindo que o texto das partes também seja branco */
+        }
+
+        /* Estilo para os links */
+        a {
+            color: white; /* Cor dos links */
+            text-decoration: none; /* Remove sublinhado */
+        }
+
+        a:hover {
+            color: #ccc; /* Cor ao passar o mouse nos links */
+        }
+
+        /* Estilo para os títulos */
+        h1, h2 {
+            color: white; /* Títulos brancos */
+        }
+
+        /* Estilo para as listas */
+        ul {
+            list-style-type: none; /* Remove os marcadores da lista */
+            padding: 0;
+        }
+
+        ul li {
+            padding: 5px 0;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Leituras do dia {{ selected_date }}</h1>
+
+    {% if user_reads %}
+        <div class="container">
+            <div class="part">
+                <h2>Velocidade</h2>
+                <ul>
+                    {% for read in user_reads %}
+                        {% if read.speed != 0 %}
+                            <li>{{ read.speed }} km/h - {{ read.timestamp }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="part">
+                <h2>Sinal de Virada</h2>
+                <ul>
+                    {% for read in user_reads %}
+                    {% if read.turn_signal == 1 %}
+                        <li>{{ "seta direita ligada" }} - {{ read.timestamp }}</li>
+                    {% elif read.turn_signal == 2 %}
+                        <li>{{ "seta esquerda ligada" }} - {{ read.timestamp }}</li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="part">
+                <h2>Frenagem</h2>
+                <ul>
+                    {% for read in user_reads %}
+                      {% if read.braking != 0 %}    
+                        <li>{{ read.braking }} - {{ read.timestamp }}</li>
+                      {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="part">
+                <h2>Video</h2>
+                <ul>
+                {% for read in user_reads %}
+                    {% if read.video_url %}
+                        <li>
+                            <!-- O vídeo usa a leitura como vínculo com funcionário, empresa e carro. -->
+                            {% if read.car %}
+                                <div>Empresa: {{ read.car.company.name|default:"Não informada" }}</div>
+                                <div>Carro: {{ read.car.identifier }}</div>
+                            {% endif %}
+                            <video width="320" controls>
+                                <source src="{{ read.video_url }}">
+                                Seu navegador não consegue reproduzir este vídeo.
+                            </video>
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <p>Nenhum vídeo enviado.</p>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+    {% else %}
+        <p>Nenhuma leitura encontrada para esta data.</p>
+    {% endif %}
+    <form method="get" action="{% url 'save_txt' selected_date %}">
+            <button type="submit">Baixar Leituras em TXT</button>
+    </form>
+    <a href="{% url 'index' %}">Sair</a>
+</body>
+</html>

@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Carma</title>
+
+    <style>
+
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .part {
+            border: 1px solid #af4444;
+            padding: 10px;
+            flex: 1;
+            margin: 5px;
+            background-color: #333;
+            color: white;
+        }
+
+        a {
+            color: white;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #c95555;
+        }
+
+        h1, h2 {
+            color: white;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            padding: 5px 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #af4444;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+        }
+
+        input, select {
+            margin: 5px 0;
+            padding: 5px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+{% if is_admin %}
+
+    <!-- ================================================= -->
+    <!-- ADMINISTRADOR -->
+    <!-- ================================================= -->
+
+    <h1>Funcionários</h1>
+
+
+    {% if company_users %}
+
+        <ul>
+
+            {% for employee in company_users %}
+
+                <li>
+
+                    <a href="{% url 'Funcionario' employee.id %}">
+
+                        {% if employee.first_name %}
+
+                            {{ employee.first_name }}
+
+                        {% else %}
+
+                            {{ employee.username }}
+
+                        {% endif %}
+
+                    </a>
+
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p>Nenhum funcionário cadastrado.</p>
+
+    {% endif %}
+
+
+    <hr>
+
+
+    <!-- ================================================= -->
+    <!-- ATRIBUIR CARRO -->
+    <!-- ================================================= -->
+
+    <h2>Atribuir carro a funcionário</h2>
+
+    <form method="POST" action="{% url 'manage_cars' %}">
+
+        {% csrf_token %}
+
+        {{ assignment_form.as_p }}
+
+        <button type="submit">
+            Atribuir carro
+        </button>
+
+    </form>
+
+
+    <hr>
+
+
+    <!-- ================================================= -->
+    <!-- CARROS ATRIBUÍDOS -->
+    <!-- ================================================= -->
+
+    <h2>Carros atribuídos</h2>
+
+
+    {% if assignments %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Carro</th>
+                    <th>Funcionário</th>
+                    <th>Data inicial</th>
+                    <th>Data final</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for assignment in assignments %}
+
+                    <tr>
+
+                        <td>
+                            {{ assignment.car.identifier }}
+                        </td>
+
+
+                        <td>
+
+                            {% if assignment.user.first_name %}
+
+                                {{ assignment.user.first_name }}
+
+                            {% else %}
+
+                                {{ assignment.user.username }}
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {{ assignment.start_date|date:"d/m/Y" }}
+                        </td>
+
+
+                        <td>
+                            {{ assignment.end_date|date:"d/m/Y" }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    {% else %}
+
+        <p>Nenhum carro atribuído.</p>
+
+    {% endif %}
+
+
+
+{% else %}
+
+    <!-- ================================================= -->
+    <!-- FUNCIONÁRIO -->
+    <!-- ================================================= -->
+
+    <h1>Minhas leituras</h1>
+
+
+    {% if grouped_reads %}
+
+        <ul>
+
+            {% for read in grouped_reads %}
+
+                <li>
+
+                    <a href="{% url 'Information' read.date %}">
+
+                        {{ read.date|date:"d/m/Y" }}
+
+                    </a>
+
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p>
+            Você não possui leituras.
+        </p>
+
+    {% endif %}
+
+
+{% endif %}
+
+
+<br>
+
+<a href="{% url 'logout' %}">
+    Sair
+</a>
+
+
+</body>
+
+</html>

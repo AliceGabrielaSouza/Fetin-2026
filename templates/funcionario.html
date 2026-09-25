@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Funcionário</title>
+
+    <style>
+
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        a {
+            color: white;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #c95555;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 8px 0;
+        }
+
+        .data-link {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #982323;
+            border-radius: 5px;
+        }
+
+        .data-link:hover {
+            background-color: #c95555;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #982323;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>
+
+    Leituras de
+
+    {% if selected_user.first_name %}
+
+        {{ selected_user.first_name }}
+
+    {% else %}
+
+        {{ selected_user.username }}
+
+    {% endif %}
+
+</h1>
+
+
+{% if grouped_reads %}
+
+    <h2>Datas das leituras</h2>
+
+    <ul>
+
+        {% for read in grouped_reads %}
+
+            <li>
+
+                <a class="data-link"
+                   href="{% url 'Funcionario_date' selected_user.id read.date|date:'Y-m-d' %}">
+
+                    {{ read.date|date:"d/m/Y" }}
+
+                </a>
+
+            </li>
+
+        {% endfor %}
+
+    </ul>
+
+{% else %}
+
+    <p>
+        Este funcionário não possui leituras.
+    </p>
+
+{% endif %}
+
+
+{% if reads %}
+
+    <hr>
+
+    <h2>
+        Leituras do dia {{ selected_date|date:"d/m/Y" }}
+    </h2>
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>Horário</th>
+                <th>Velocidade</th>
+                <th>Freio</th>
+                <th>Seta</th>
+                <th>Carro</th>
+                <th>Vídeo</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for read in reads %}
+
+                <tr>
+
+                    <td>
+                        {{ read.timestamp|date:"H:i:s" }}
+                    </td>
+
+                    <td>
+                        {{ read.speed }}
+                    </td>
+
+                    <td>
+                        {{ read.braking }}
+                    </td>
+
+                    <td>
+                        {{ read.turn_signal }}
+                    </td>
+
+                    <td>
+                        {% if read.car %}
+                            {{ read.car.identifier }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if read.video_url %}
+                            <!-- O vídeo é localizado pelo funcionário e pela data da leitura. -->
+                            <video width="240" controls>
+                                <source src="{{ read.video_url }}">
+                                Seu navegador não consegue reproduzir este vídeo.
+                            </video>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+{% endif %}
+
+
+<br>
+
+<a href="{% url 'Carma' %}">
+    ← Voltar
+</a>
+
+</body>
+
+</html>

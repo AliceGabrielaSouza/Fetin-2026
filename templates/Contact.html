@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <title>Equipe | Carma</title>
+    <style>
+        body {
+            background: #090909;
+            color: #f5f5f5;
+            margin: 0;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+        }
+        body * {
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        header ul {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 18px;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        header .nav-link {
+            color: #f5f5f5 !important;
+        }
+
+        main {
+            /* O contêiner mais largo aumenta em cerca de 50% a área disponível para as descrições. */
+            max-width: 1950px;
+            margin: 0 auto;
+            padding: 72px 0 48px;
+        }
+
+        .page-heading {
+            color: #c83d3d;
+            font-size: clamp(42px, 7vw, 76px);
+            line-height: 1;
+            text-align: center;
+            margin: 0;
+            letter-spacing: 0;
+        }
+
+        .team-list {
+            display: grid;
+            gap: 28px;
+            margin-top: 64px;
+        }
+
+        .team-member {
+            display: grid;
+            /* A foto fica fixa em 200px e o restante do espaço é reservado à descrição. */
+            grid-template-columns: 200px minmax(0, 1fr);
+            align-items: center;
+            gap: 36px;
+            padding: 24px 32px;
+            border-left: 3px solid #c83d3d;
+            background: #151515;
+        }
+
+        .team-image {
+            display: block;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 8px;
+        }
+
+        .member-name {
+            color: #ffffff;
+            font-size: 32px;
+            font-family: Arial, sans-serif;
+            margin: 0 0 14px;
+        }
+
+        .Orientador {
+            color: #ffffff;
+            font-size: 26px;
+            font-family: Arial, sans-serif;
+            margin: 0 0 14px;
+        }
+
+        .member-description {
+            color: #d3d3d3;
+            font-size: 18px;
+            font-family: Arial, sans-serif;
+            line-height: 1.65;
+            margin: 0;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 16px;
+            }
+
+            header ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            main {
+                padding-top: 48px;
+            }
+
+            .team-list {
+                margin-top: 40px;
+            }
+
+            .team-member {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 20px;
+            }
+
+            .team-image {
+                width: 200px;
+                height: 200px;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="title">
+        </div>
+
+        <ul>
+            <a href="{% url 'History' %}" class="nav-link px-2 link-dark">Historia do projeto</a>
+            <a href="{% url 'ONU' %}" class="nav-link px-2 link-dark">Impacto do Projeto</a>
+            <a href="{% url 'Contact' %}" class="nav-link px-2 link-dark">Equipe</a>
+            <a href="Login" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Login</a>     
+        </ul>
+    </header>
+
+    <main>
+        
+        <h1 class="page-heading">Conheça a equipe</h1>
+
+        <section class="team-list" aria-label="Integrantes da equipe">
+            
+            <article class="team-member">
+                <img src="{% static 'images/Alice.jpeg' %}" alt="Foto Alice" class="team-image">
+                <div>
+                    <h2 class="member-name">Alice</h2>
+                    <p class="member-description">Formada em desenvolvimento de sistemas pela ETE FMC, Aluna de Engenharia de Computação no INATEL. Responsável pelo software do Carma.</p>
+                </div>
+            </article>
+
+            <article class="team-member">
+                <img src="{% static 'images/Grazi.png' %}" alt="Foto Grazi" class="team-image">
+                <div>
+                    <h2 class="member-name">Grazielle</h2>
+                    <p class="member-description">Formada em desenvolvimento de sistemas pela ETE FMC, Aluna de Engenharia de Computação no INATEL. Responsável pela comunicação de microcontroladores do Carma.</p>
+                </div>
+            </article>
+
+            <article class="team-member">
+                <img src="{% static 'images/Miguel.png' %}" alt="Foto Miguel" class="team-image">
+                <div>
+                    <h2 class="member-name">Miguel</h2>
+                    <p class="member-description">Formado em desenvolvimento de sistemas pela ETE FMC, Aluno de Engenharia de Computação no INATEL. Responsável pela montagem e planejamento de hardware do Carma.</p>
+                </div>
+            </article>
+
+            <article class="team-member">
+                <img src="{% static 'images/Vitoria.png' %}" alt="Foto Vitória" class="team-image">
+                <div>
+                    <h2 class="member-name">Vitória</h2>
+                    <p class="member-description">Formada em desenvolvimento de sistemas pela ETE FMC, Aluna de Engenharia de produção no INATEL. Scrum Master e suporte de software do Carma.</p>
+                </div>
+            </article>
+
+            <article class="team-member">
+                <img src="{% static 'images/Andery.jpg' %}" alt="Foto de José Andery" class="team-image">
+                <div>
+                    <h2 class="Orientador">Orientador</h2>
+                    <h2 class="member-name">José Andery</h2>
+                    <p class="member-description">Professor, engenheiro biomédico, investido em pesquisas de inteligência artificial, visão computacional e educação.</p>
+                </div>
+            </article>
+        </section>
+    </main>
+</body>
+</html>
