@@ -26,8 +26,8 @@ def login_user(request):
             return redirect('Carma')
 
         else:
-            return render(request,'login.html',{'error': 'Usuário ou senha inválidos'})
-    return render(request, 'login.html')
+            return render(request,'Login.html',{'error': 'Usuário ou senha inválidos'})
+    return render(request, 'Login.html')
 
 def cadastro(request):
 
@@ -59,5 +59,5 @@ def cadastro(request):
 
         form = RegisterForm()
 
-    return render(request,'cadastro.html',{'form': form,'companies': Company.objects.all()})
+    return render(request,'Cadastro.html',{'form': form,'companies': Company.objects.all()})
 
