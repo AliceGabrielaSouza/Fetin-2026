@@ -165,3 +165,6 @@ LOGIN_REDIRECT_URL = '/login_user'
 LOGOUT_REDIRECT_URL = '/index'
 LOGIN_URL = '/login_user'
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://fetin-2026.onrender.com',
+]
