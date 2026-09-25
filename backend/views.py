@@ -137,19 +137,18 @@ def Carma(request):
 
     profile = get_object_or_404(Profile, user=request.user)
 
-    print('DEBUG >>> user:', request.user, '| user.id:', request.user.id)
-    print('DEBUG >>> profile.id:', profile.id, '| profile.company:', profile.company, '| company_id:', profile.company_id)
-
     if profile.role == 'ADMIN':
 
         company_users = User.objects.filter(profile__company=profile.company,profile__role='EMPLOYEE').order_by('first_name','username')
         assignment_form = CarAssignmentForm(company=profile.company)
-        assignments = CarAssignment.objects.filter(car__company=profile.company).select_related('car','user').order_by('car__identifier','-start_date')
-
-        print('DEBUG >>> assignments.count():', assignments.count())
+        assignments = CarAssignment.objects.filter(car__company=profile.company,user__profile__company=profile.company).select_related('car','user').order_by('car__identifier','-start_date')
 
         return render(request,'Carma.html',{'is_admin': True,'company_users': company_users,'assignment_form': assignment_form,'assignments': assignments,})
-    ...
+
+    user_reads = Read.objects.filter(client=request.user)
+    grouped_reads = (user_reads.annotate(date=TruncDate('timestamp')).values('date').distinct().order_by('-date'))
+
+    return render(request,'Carma.html',{'is_admin': False,'selected_user': request.user,'grouped_reads': grouped_reads,})
 
 @login_required
 def Funcionario(request, user_id, date=None):
