@@ -1,24 +1,22 @@
-from datetime import datetime
+from datetime import date, datetime
 import io
-
-from pathlib import Path
-import re
-from django.conf import settings
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 from django.utils import timezone
+from django.utils import timezone
 from django.db.models.functions import TruncDate
 
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 
 from accounts.models import Company, Profile
 from accounts.forms import RegisterForm
 
-from comunication.models import Read, CarAssignment
+from comunication.models import Read, Car, CarAssignment
 from comunication.forms import CarAssignmentForm
 
 def index(request):
@@ -36,82 +34,66 @@ def Contact(request):
 def Login(request):
     return render(request, 'Login.html', {'titulo2': 'Impacto na Sociedade'})
 
-def videos_for_user_date(user, selected_date):
-    filename_prefix = f'{user.username}_{selected_date:%Y_%m_%d}' #identifica o prefixo de data do video
-    video_pattern = re.compile(rf'^{re.escape(filename_prefix)}(?:_(\d+))?(?:\.[^.]+)?$')
-    videos = {}
-
-    # Aceita vídeos já existentes na raiz de midia e uploads na subpasta videos.
-    video_dirs = [Path(settings.MEDIA_ROOT) / 'videos', Path(settings.MEDIA_ROOT)]
-    for videos_dir in video_dirs:
-        for video_path in videos_dir.glob(f'{filename_prefix}*'):
-            if video_path.is_file():
-                match = video_pattern.match(video_path.name)
-                if match:
-                    video_number = int(match.group(1) or 1)
-                    relative_path = video_path.relative_to(settings.MEDIA_ROOT).as_posix()
-                    video_url = f'{settings.MEDIA_URL.rstrip("/")}/{relative_path}'
-                    videos.setdefault(video_number, video_url)
-
-    return videos
-
-#colocar os videos em ordem
-def add_video_urls(user_reads, user, selected_date):
-    named_videos = videos_for_user_date(user, selected_date)
-    ordered_reads = list(user_reads.order_by('timestamp', 'id'))
-
-    for position, read in enumerate(ordered_reads, start=1):
-        read.video_url = named_videos.get(position)
-
-    return ordered_reads
-
-def reads_for_user_date(user, selected_date):
-    local_date = TruncDate('timestamp', tzinfo=timezone.get_current_timezone())
-    return Read.objects.filter(client=user).annotate(
-        local_date=local_date
-    ).filter(local_date=selected_date)
-
-def read_by_date(request, date):
-    # Filtra as leituras pela data local e adiciona os vídeos correspondentes.
+def Information(request, date):
+    # Converta a string da data recebida da URL em um objeto de data
     selected_date = datetime.strptime(date, '%Y-%m-%d').date()
-    user_reads = reads_for_user_date(request.user, selected_date)
-    user_reads = add_video_urls(user_reads, request.user, selected_date)
 
+    # Filtra as leituras do usuário autenticado com base na data
+    user_reads = Read.objects.filter(client=request.user, timestamp__date=selected_date)
+    
+    for read in user_reads:
+        read.timestamp = read.timestamp.strftime("%H:%M:%S")  # Formata apenas o horário
+    # Renderiza o template 'Information.html' com os dados filtrados
     return render(request, 'Information.html', {
-        'user_reads': user_reads,
         'selected_date': selected_date,
+        'user_reads': user_reads,
     })
 
-def save_txt(request, date):
-    if request.method == 'GET':
-        selected_date = datetime.strptime(date, '%Y-%m-%d').date()
-        day = Read.objects.filter(client=request.user, timestamp__date=selected_date)
+def read_by_date(request, date):
+    # Filtra as leituras pela data fornecida
+    user_reads = Read.objects.filter(timestamp__date=date, client=request.user)
 
+    return render(request, 'Information.html', {'user_reads': user_reads, 'selected_date': date})
+
+def save_txt(request,date):
+     if request.method == 'GET':
+        # Obter o dia atual
+        selected_date = datetime.strptime(date, '%Y-%m-%d').date()
+        # Buscar todas as leituras do dia atual no banco de dados
+        day = Read.objects.filter(client=request.user, timestamp__date=date)
+
+        # Verificação se há dados para salvar
         if not day.exists():
             return HttpResponse("Nenhuma leitura encontrada para o dia de hoje.")
 
+
+        # Usar StringIO para armazenar o conteúdo antes de criar o arquivo
         file_content = io.StringIO()
 
+        # Adicionar as informações ao arquivo
         for read in day:
             line = ""
             if read.speed == 1:
                 line += f"Velocidade: {read.speed} km/h, "
 
             if read.braking == 1:
-                line += "Freio ativado "
+                line += f"Freio ativado "
 
-            if read.turn_signal != 0:
+            if read.turn_signal != 0 :
                 line += "Seta Ligada"
-
+            
             if line:
+                # Adicionar o timestamp à linha e escrever no arquivo
                 line += f"  Timestamp: {read.timestamp}\n"
                 file_content.write(line)
-
+        # Definir o conteúdo para resposta HTTP com download
         response = HttpResponse(file_content.getvalue(), content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename="leituras_{date}.txt"'
+        
+        # Fechar o StringIO
         file_content.close()
+
         return response
-    
 def Cadastro(request):
 
     companies = Company.objects.all()
@@ -155,20 +137,19 @@ def Carma(request):
 
     profile = get_object_or_404(Profile, user=request.user)
 
+    print('DEBUG >>> user:', request.user, '| user.id:', request.user.id)
+    print('DEBUG >>> profile.id:', profile.id, '| profile.company:', profile.company, '| company_id:', profile.company_id)
+
     if profile.role == 'ADMIN':
 
         company_users = User.objects.filter(profile__company=profile.company,profile__role='EMPLOYEE').order_by('first_name','username')
         assignment_form = CarAssignmentForm(company=profile.company)
-        assignments = CarAssignment.objects.filter(car__company=profile.company,user__profile__company=profile.company).select_related('car','user').order_by('car__identifier','-start_date')
+        assignments = CarAssignment.objects.filter(car__company=profile.company).select_related('car','user').order_by('car__identifier','-start_date')
+
+        print('DEBUG >>> assignments.count():', assignments.count())
 
         return render(request,'Carma.html',{'is_admin': True,'company_users': company_users,'assignment_form': assignment_form,'assignments': assignments,})
-
-
-    user_reads = Read.objects.filter(client=request.user)
-    grouped_reads = (user_reads.annotate(date=TruncDate('timestamp')).values('date').distinct().order_by('-date'))
-
-    return render(request,'Carma.html',{'is_admin': False,'selected_user': request.user,'grouped_reads': grouped_reads,})
-
+    ...
 
 @login_required
 def Funcionario(request, user_id, date=None):
@@ -189,13 +170,10 @@ def Funcionario(request, user_id, date=None):
 
     if date:
         selected_date = parse_date(date)
-        if selected_date:
-            # O administrador só chega aqui para funcionários da própria empresa.
-            reads = reads_for_user_date(selected_user, selected_date)
-            # Reutiliza o padrão de nomes dos vídeos do funcionário selecionado.
-            reads = add_video_urls(reads, selected_user, selected_date)
+        if selected_date:reads = Read.objects.filter(client=selected_user,timestamp__date=selected_date).order_by('timestamp')
 
-    return render(request, 'Funcionario.html', {'selected_user': selected_user,'grouped_reads': grouped_reads,'reads': reads,'selected_date': selected_date,})
+    return render(request, 'funcionario.html', {'selected_user': selected_user,'grouped_reads': grouped_reads,'reads': reads,'selected_date': selected_date,})
+
 
 @login_required
 def manage_cars(request):
